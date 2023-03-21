@@ -35,15 +35,15 @@ public class CityController {
     public ResponseDto get(
             @PathVariable Long cityId
     ) {
-        cityService.get(cityId);
-        return ResponseDto.ok();
+        CityResponseDto response = cityService.get(cityId);
+        return ResponseDto.ok("city", response);
     }
 
     @DeleteMapping("/{cityId}")
     public ResponseDto delete(
             @PathVariable Long cityId
     ) {
-        CityResponseDto response = cityService.get(cityId);
-        return ResponseDto.ok("city", response);
+        cityService.delete(cityId);
+        return ResponseDto.ok();
     }
 }
