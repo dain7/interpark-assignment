@@ -1,10 +1,8 @@
 package com.interpark.assignment.controller;
 
 import com.interpark.assignment.dto.ResponseDto;
-import com.interpark.assignment.dto.city.CityCreateDto;
 import com.interpark.assignment.dto.user.UserCreateDto;
-import com.interpark.assignment.dto.user.UserDto;
-import com.interpark.assignment.service.CityService;
+import com.interpark.assignment.dto.user.UserResponseDto;
 import com.interpark.assignment.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +20,7 @@ public class UserController {
     public ResponseDto signup(
             @RequestBody UserCreateDto request
     ) {
-        UserDto response = userService.signup(request);
+        UserResponseDto response = userService.signup(request);
         return ResponseDto.ok("user", response);
     }
 }
