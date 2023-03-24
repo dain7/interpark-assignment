@@ -1,4 +1,4 @@
-package com.interpark.assignment;
+package com.interpark.assignment.integration;
 
 import com.interpark.assignment.domain.City;
 import com.interpark.assignment.dto.city.CityRequestDto;
@@ -38,12 +38,12 @@ public class CityControllerTest extends BaseIntegrationTest {
         //given
         Long memberId = memberSetUp.getMemberId("인터파크");
         CityRequestDto request = CityRequestDto.builder()
-                .memberId(memberId)
                 .name("서울")
                 .build();
 
         //when
         mvc.perform(post("/city")
+                        .header("member-id", memberId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request))
@@ -60,7 +60,7 @@ public class CityControllerTest extends BaseIntegrationTest {
         Long memberId = memberSetUp.getMemberId("인터파크");
         Long cityId = citySetUp.getCityId(memberId, "서울");
 
-        CityUpdateRequestDto request = CityUpdateRequestDto.builder()
+        CityRequestDto request = CityRequestDto.builder()
                 .name("부산")
                 .build();
 

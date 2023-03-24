@@ -1,4 +1,4 @@
-package com.interpark.assignment;
+package com.interpark.assignment.integration;
 
 import com.interpark.assignment.dto.member.MemberCreateDto;
 import org.junit.jupiter.api.DisplayName;

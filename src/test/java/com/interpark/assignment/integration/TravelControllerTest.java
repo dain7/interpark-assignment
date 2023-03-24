@@ -1,4 +1,4 @@
-package com.interpark.assignment;
+package com.interpark.assignment.integration;
 
 import com.interpark.assignment.domain.Travel;
 import com.interpark.assignment.dto.travel.TravelRequestDto;

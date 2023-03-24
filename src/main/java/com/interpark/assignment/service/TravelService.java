@@ -64,10 +64,10 @@ public class TravelService {
     }
 
     public TravelResponseDto get(Long travelId) {
-        Travel travel = travelRepository.findById(travelId).orElseThrow(TravelNotFoundException::new);
+        Travel travel = travelRepository.findByIdWithCity(travelId).orElseThrow(TravelNotFoundException::new);
         return TravelResponseDto.builder()
                 .id(travel.getId())
-                .cityName(travel.getCity().getName()) //TODO fetch 변경
+                .cityName(travel.getCity().getName())
                 .startDate(travel.getStartDate())
                 .endDate(travel.getEndDate())
                 .build();
