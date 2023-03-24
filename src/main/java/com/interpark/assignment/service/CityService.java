@@ -2,7 +2,6 @@ package com.interpark.assignment.service;
 
 import com.interpark.assignment.domain.City;
 import com.interpark.assignment.domain.Member;
-import com.interpark.assignment.domain.SearchLog;
 import com.interpark.assignment.dto.city.*;
 import com.interpark.assignment.exception.CityCannotDeleteException;
 import com.interpark.assignment.exception.CityNotFoundException;
@@ -24,7 +23,6 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final MemberRepository memberRepository;
-    private final SearchLogRepository searchLogRepository;
 
     @Transactional
     public CityCreateResponseDto create(CityRequestDto request) {
