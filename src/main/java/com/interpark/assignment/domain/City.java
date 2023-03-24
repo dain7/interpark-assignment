@@ -25,7 +25,6 @@ public class City {
     private String name;
 
     @CreatedDate
-    @Column(updatable = false)
     private LocalDateTime createDatetime;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, orphanRemoval=true)

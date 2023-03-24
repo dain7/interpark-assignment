@@ -15,9 +15,10 @@ public class TravelController {
 
     @PostMapping
     public ResponseDto create(
+            @RequestHeader("member-id") Long memberId,
             @RequestBody TravelRequestDto request
     ) {
-        TravelCreateResponseDto response = travelService.create(request);
+        TravelCreateResponseDto response = travelService.create(memberId, request);
         return ResponseDto.create(response.getId());
     }
 

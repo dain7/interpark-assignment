@@ -20,12 +20,16 @@ public class Travel {
     @ManyToOne(fetch = FetchType.LAZY)
     private City city;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
 
     @Builder
-    public Travel(City city, LocalDate startDate, LocalDate endDate) {
+    public Travel(Member member, City city, LocalDate startDate, LocalDate endDate) {
+        this.member = member;
         this.city = city;
         this.startDate = startDate;
         this.endDate = endDate;
