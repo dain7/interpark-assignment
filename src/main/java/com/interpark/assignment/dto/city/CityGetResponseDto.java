@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CityRequestDto {
-    private Long memberId;
+public class CityGetResponseDto {
+    private Long id;
     private String name;
 }

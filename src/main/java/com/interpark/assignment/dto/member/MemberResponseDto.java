@@ -1,4 +1,4 @@
-package com.interpark.assignment.dto.city;
+package com.interpark.assignment.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CityRequestDto {
-    private Long memberId;
+public class MemberResponseDto {
+    private Long id;
     private String name;
 }

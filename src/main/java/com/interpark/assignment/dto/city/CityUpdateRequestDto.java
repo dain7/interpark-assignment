@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CityRequestDto {
-    private Long memberId;
+public class CityUpdateRequestDto {
     private String name;
 }

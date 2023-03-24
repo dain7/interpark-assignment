@@ -1,4 +1,4 @@
-package com.interpark.assignment.dto.user;
+package com.interpark.assignment.dto.travel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class TravelCreateResponseDto {
     private Long id;
-    private String name;
 }

@@ -1,4 +1,4 @@
-package com.interpark.assignment.dto.user;
+package com.interpark.assignment.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateDto {
+public class MemberCreateDto {
     private String name;
 }
