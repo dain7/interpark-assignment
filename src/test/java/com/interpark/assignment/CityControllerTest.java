@@ -80,6 +80,44 @@ public class CityControllerTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("여행에 지정되지 않은 도시 삭제에 성공한다.")
+    void delete_city_test() throws Exception {
+        //given
+        Long memberId = memberSetUp.getMemberId("인터파크");
+        Long cityId = citySetUp.getCityId(memberId, "서울");
+
+        //when
+        mvc.perform(delete("/city/{cityId}", cityId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        // then
+        City city = cityRepository.findById(cityId).orElse(null);
+        Assertions.assertNull(city);
+    }
+
+    @Test
+    @DisplayName("여행에 지정된 도시 삭제에 실패한다.")
+    void delete_city_with_travel_test() throws Exception {
+        //given
+        Long memberId = memberSetUp.getMemberId("인터파크");
+        Long cityId = citySetUp.getCityId(memberId, "서울");
+        travelSetUp.getTravelId(cityId, LocalDate.of(2023,3,1), LocalDate.of(2323, 5, 1));
+
+        //when
+        mvc.perform(delete("/city/{cityId}", cityId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ErrorCode.CITY_CANNOT_DELETE_EXCEPTION.getMessage()));
+    }
+
+    @Test
     @DisplayName("단일 도시 정보 조회에 성공한다.")
     void get_city_test() throws Exception {
         //given
@@ -178,43 +216,5 @@ public class CityControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.data.cities[8].name").value("강릉"))
                 .andExpect(jsonPath("$.data.cities[9].name").value("경주"));
 
-    }
-
-    @Test
-    @DisplayName("여행에 지정되지 않은 도시 삭제에 성공한다.")
-    void delete_city_test() throws Exception {
-        //given
-        Long memberId = memberSetUp.getMemberId("인터파크");
-        Long cityId = citySetUp.getCityId(memberId, "서울");
-
-        //when
-        mvc.perform(delete("/city/{cityId}", cityId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        // then
-        City city = cityRepository.findById(cityId).orElse(null);
-        Assertions.assertNull(city);
-    }
-
-    @Test
-    @DisplayName("여행에 지정된 도시 삭제에 실패한다.")
-    void delete_city_with_travel_test() throws Exception {
-        //given
-        Long memberId = memberSetUp.getMemberId("인터파크");
-        Long cityId = citySetUp.getCityId(memberId, "서울");
-        Long travelId = travelSetUp.getTravelId(cityId, LocalDate.of(2023,3,1), LocalDate.of(2323, 5, 1));
-
-        //when
-        mvc.perform(delete("/city/{cityId}", cityId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ErrorCode.CITY_CANNOT_DELETE_EXCEPTION.getMessage()));
     }
 }
