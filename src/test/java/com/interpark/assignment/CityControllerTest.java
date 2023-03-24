@@ -94,8 +94,8 @@ public class CityControllerTest extends BaseIntegrationTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.city.id").exists())
-                .andExpect(jsonPath("$.data.city.name").value("서울"));
+                .andExpect(jsonPath("$.data.cities.id").exists())
+                .andExpect(jsonPath("$.data.cities.name").value("서울"));
     }
 
     @Test
@@ -126,8 +126,8 @@ public class CityControllerTest extends BaseIntegrationTest {
         /**
          *  3. 하루 이내에 등록된 도시 (최근 등록순) : 대전, 인천
          */
-        Long daejeonId = citySetUp.getCityId(memberId, "대전");
-        Long incheonId = citySetUp.getCityId(memberId, "인천");
+        citySetUp.getCityId(memberId, "대전");
+        citySetUp.getCityId(memberId, "인천");
 
         /**
          * 4. 최근 일주일 이내에 한번 이상 조회된 도시 : 제주
