@@ -82,8 +82,7 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
         List<City> allCities = queryFactory.select(city)
                 .from(city)
                 .where(
-                        notInCities(cities),
-                        eqMemberByCity(memberId)
+                        notInCities(cities)
                 )
                 .fetch();
         cities.addAll(allCities);
