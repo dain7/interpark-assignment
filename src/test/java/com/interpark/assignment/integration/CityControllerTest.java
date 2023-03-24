@@ -2,9 +2,9 @@ package com.interpark.assignment.integration;
 
 import com.interpark.assignment.domain.City;
 import com.interpark.assignment.dto.city.CityRequestDto;
-import com.interpark.assignment.dto.city.CityUpdateRequestDto;
 import com.interpark.assignment.exception.ErrorCode;
 import com.interpark.assignment.repository.CityRepository;
+import com.interpark.assignment.repository.SearchLogRepository;
 import com.interpark.assignment.setUp.CitySetUp;
 import com.interpark.assignment.setUp.MemberSetUp;
 import com.interpark.assignment.setUp.TravelSetUp;
@@ -25,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CityControllerTest extends BaseIntegrationTest {
     @Autowired
     private CityRepository cityRepository;
+    @Autowired
+    private SearchLogRepository searchLogRepository;
     @Autowired
     private MemberSetUp memberSetUp;
     @Autowired
@@ -105,7 +107,7 @@ public class CityControllerTest extends BaseIntegrationTest {
         //given
         Long memberId = memberSetUp.getMemberId("인터파크");
         Long cityId = citySetUp.getCityId(memberId, "서울");
-        travelSetUp.getTravelId(cityId, LocalDate.of(2023,3,1), LocalDate.of(2323, 5, 1));
+        travelSetUp.getTravelId(memberId, cityId, LocalDate.of(2023,3,1), LocalDate.of(2323, 5, 1));
 
         //when
         mvc.perform(delete("/city/{cityId}", cityId)
@@ -148,9 +150,9 @@ public class CityControllerTest extends BaseIntegrationTest {
         Long seoulId = citySetUp.getCityId(memberId, "서울");
         Long jeonjuId = citySetUp.getCityId(memberId, "전주");
 
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,2,1), LocalDate.of(2323, 4, 1));
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,20), LocalDate.of(2323, 4, 1));
-        travelSetUp.getTravelId(jeonjuId, LocalDate.of(2023,3,1), LocalDate.of(2323, 4, 1));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,2,1), LocalDate.of(2323, 4, 1));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,3,20), LocalDate.of(2323, 4, 1));
+        travelSetUp.getTravelId(memberId, jeonjuId, LocalDate.of(2023,3,1), LocalDate.of(2323, 4, 1));
 
         /**
          * 2. 여행이 예정된 도시 (시작일 순) : 대구, 광주
@@ -158,11 +160,11 @@ public class CityControllerTest extends BaseIntegrationTest {
         Long daeguId = citySetUp.getCityId(memberId, "대구");
         Long gwangjuId = citySetUp.getCityId(memberId, "광주");
 
-        travelSetUp.getTravelId(daeguId, LocalDate.of(2023,4,1), LocalDate.of(2323, 4, 5));
-        travelSetUp.getTravelId(gwangjuId, LocalDate.of(2023,5,10), LocalDate.of(2323, 6, 1));
+        travelSetUp.getTravelId(memberId, daeguId, LocalDate.of(2023,4,1), LocalDate.of(2323, 4, 5));
+        travelSetUp.getTravelId(memberId, gwangjuId, LocalDate.of(2023,5,10), LocalDate.of(2323, 6, 1));
 
         /**
-         *  3. 하루 이내에 등록된 도시 (최근 등록순) : 대전, 인천
+         *  3. 하루 이내에 등록된 도시 (최근 등록순) : 인천, 대전
          */
         citySetUp.getCityId(memberId, "대전");
         citySetUp.getCityId(memberId, "인천");
@@ -171,8 +173,8 @@ public class CityControllerTest extends BaseIntegrationTest {
          * 4. 최근 일주일 이내에 한번 이상 조회된 도시 : 제주
          */
         Long jejuId = citySetUp.getCityId(memberId, "제주");
-        City city = cityRepository.findById(jejuId).orElse(null);
-        city.updateCreateTime(LocalDateTime.of(2022, 2, 22, 13, 0));
+        City jeju = cityRepository.findById(jejuId).orElse(null);
+        jeju.updateCreateTime(LocalDateTime.of(2019, 2, 22, 13, 0));
 
         // 조회 API Call
         mvc.perform(get("/city/{cityId}", jejuId)
@@ -183,19 +185,21 @@ public class CityControllerTest extends BaseIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+
         /**
          * 5. 나머지 도시 : 강릉, 경주, 울산
          */
-        Long gangnengId = citySetUp.getCityId(memberId, "강릉");
-        Long gyungjuId = citySetUp.getCityId(memberId, "경주");
-        Long ulsanId = citySetUp.getCityId(memberId, "울산");
+        Long gangnenungId = citySetUp.getCityId(memberId, "강릉");
+        City gangneung = cityRepository.findById(gangnenungId).orElse(null);
+        gangneung.updateCreateTime(LocalDateTime.of(2022,3,1,13,00));
 
-        City gangneng = cityRepository.findById(gangnengId).orElse(null);
-        gangneng.updateCreateTime(LocalDateTime.of(2021, 12, 25, 13, 0));
+        Long gyungjuId = citySetUp.getCityId(memberId, "경주");
         City gyungju = cityRepository.findById(gyungjuId).orElse(null);
-        gyungju.updateCreateTime(LocalDateTime.of(2020, 3, 2, 13, 0));
+        gyungju.updateCreateTime(LocalDateTime.of(2022,2,25,13,00));
+
+        Long ulsanId = citySetUp.getCityId(memberId, "울산");
         City ulsan = cityRepository.findById(ulsanId).orElse(null);
-        ulsan.updateCreateTime(LocalDateTime.of(2023, 2, 22, 13, 0));
+        ulsan.updateCreateTime(LocalDateTime.of(2022,1,2,13,00));
 
         //when & then
         mvc.perform(get("/city")
@@ -210,8 +214,8 @@ public class CityControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.data.cities[2].name").value("서울"))
                 .andExpect(jsonPath("$.data.cities[3].name").value("대구"))
                 .andExpect(jsonPath("$.data.cities[4].name").value("광주"))
-                .andExpect(jsonPath("$.data.cities[5].name").value("대전"))
-                .andExpect(jsonPath("$.data.cities[6].name").value("인천"))
+                .andExpect(jsonPath("$.data.cities[5].name").value("인천"))
+                .andExpect(jsonPath("$.data.cities[6].name").value("대전"))
                 .andExpect(jsonPath("$.data.cities[7].name").value("제주"))
                 .andExpect(jsonPath("$.data.cities[8].name").value("강릉"))
                 .andExpect(jsonPath("$.data.cities[9].name").value("경주"));
@@ -230,18 +234,18 @@ public class CityControllerTest extends BaseIntegrationTest {
         Long ulsanId = citySetUp.getCityId(memberId, "울산");
         Long jejuId = citySetUp.getCityId(memberId, "제주");
 
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,2,1), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(jeonjuId, LocalDate.of(2023,2,20), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(gangnengId, LocalDate.of(2023,3,1), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(gyungjuId, LocalDate.of(2023,3,2), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,3), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(ulsanId, LocalDate.of(2023,3,4), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(jejuId, LocalDate.of(2023,3,5), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,6), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(jeonjuId, LocalDate.of(2023,3,7), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,10), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(ulsanId, LocalDate.of(2023,3,15), LocalDate.of(2323, 4, 10));
-        travelSetUp.getTravelId(jejuId, LocalDate.of(2023,3,20), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,2,1), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, jeonjuId, LocalDate.of(2023,2,20), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, gangnengId, LocalDate.of(2023,3,1), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, gyungjuId, LocalDate.of(2023,3,2), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,3,3), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, ulsanId, LocalDate.of(2023,3,4), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, jejuId, LocalDate.of(2023,3,5), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,3,6), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, jeonjuId, LocalDate.of(2023,3,7), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, seoulId, LocalDate.of(2023,3,10), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, ulsanId, LocalDate.of(2023,3,15), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(memberId, jejuId, LocalDate.of(2023,3,20), LocalDate.of(2323, 4, 10));
 
         //when & then
         mvc.perform(get("/city")

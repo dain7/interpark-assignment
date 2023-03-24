@@ -8,7 +8,9 @@ import com.interpark.assignment.dto.travel.TravelResponseDto;
 import com.interpark.assignment.exception.EndDateBeforeOrSameStartDateException;
 import com.interpark.assignment.exception.TravelNotFoundException;
 import com.interpark.assignment.repository.CityRepository;
+import com.interpark.assignment.repository.MemberRepository;
 import com.interpark.assignment.repository.TravelRepository;
+import com.interpark.assignment.service.MemberService;
 import com.interpark.assignment.service.TravelService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,8 @@ public class TravelServiceTest {
     TravelRepository travelRepository;
     @Mock
     CityRepository cityRepository;
+    @Mock
+    MemberRepository memberRepository;
     @InjectMocks
     TravelService travelService;
 
@@ -35,6 +39,9 @@ public class TravelServiceTest {
     @DisplayName("여행 등록에 성공한다.")
     void create_travel_success_test() throws Exception {
         //given
+        Long memberId = 1L;
+        Member member = mock(Member.class);
+
         Long cityId = 1L;
         City city = mock(City.class);
 
@@ -44,10 +51,11 @@ public class TravelServiceTest {
                 .endDate(LocalDate.of(2023,12,31))
                 .build();
 
+        when(memberRepository.findById(memberId)).thenReturn(java.util.Optional.ofNullable(member));
         when(cityRepository.findById(cityId)).thenReturn(java.util.Optional.ofNullable(city));
 
         //when
-        travelService.create(request);
+        travelService.create(memberId, request);
 
         //then
         verify(travelRepository, times(1)).save(any());
@@ -57,6 +65,9 @@ public class TravelServiceTest {
     @DisplayName("여행 끝 날짜가 시작 날짜보다 빨라, 여행 등록에 실패한다.")
     void create_travel_with_invalid_date_fail_test() throws Exception {
         //given
+        Long memberId = 1L;
+        Member member = mock(Member.class);
+
         Long cityId = 1L;
         City city = mock(City.class);
 
@@ -66,11 +77,12 @@ public class TravelServiceTest {
                 .endDate(LocalDate.of(2023,1,1))
                 .build();
 
+        when(memberRepository.findById(memberId)).thenReturn(java.util.Optional.ofNullable(member));
         when(cityRepository.findById(cityId)).thenReturn(java.util.Optional.ofNullable(city));
 
         // when & then
         Assertions.assertThrows(EndDateBeforeOrSameStartDateException.class, () -> {
-            travelService.create(request);
+            travelService.create(memberId, request);
         });
     }
 
