@@ -215,6 +215,53 @@ public class CityControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.data.cities[7].name").value("제주"))
                 .andExpect(jsonPath("$.data.cities[8].name").value("강릉"))
                 .andExpect(jsonPath("$.data.cities[9].name").value("경주"));
+    }
 
+    @Test
+    @DisplayName("여행 중인 도시가 10개 이상(중복 포함)인 경우 모두 노출하기에 성공한다.")
+    void get_traveling_cities_more_than_10_test() throws Exception {
+        //given
+        Long memberId = memberSetUp.getMemberId("인터파크");
+
+        Long seoulId = citySetUp.getCityId(memberId, "서울");
+        Long jeonjuId = citySetUp.getCityId(memberId, "전주");
+        Long gangnengId = citySetUp.getCityId(memberId, "강릉");
+        Long gyungjuId = citySetUp.getCityId(memberId, "경주");
+        Long ulsanId = citySetUp.getCityId(memberId, "울산");
+        Long jejuId = citySetUp.getCityId(memberId, "제주");
+
+        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,2,1), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(jeonjuId, LocalDate.of(2023,2,20), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(gangnengId, LocalDate.of(2023,3,1), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(gyungjuId, LocalDate.of(2023,3,2), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,3), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(ulsanId, LocalDate.of(2023,3,4), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(jejuId, LocalDate.of(2023,3,5), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,6), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(jeonjuId, LocalDate.of(2023,3,7), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(seoulId, LocalDate.of(2023,3,10), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(ulsanId, LocalDate.of(2023,3,15), LocalDate.of(2323, 4, 10));
+        travelSetUp.getTravelId(jejuId, LocalDate.of(2023,3,20), LocalDate.of(2323, 4, 10));
+
+        //when & then
+        mvc.perform(get("/city")
+                        .header("member-id", memberId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.cities[0].name").value("서울"))
+                .andExpect(jsonPath("$.data.cities[1].name").value("전주"))
+                .andExpect(jsonPath("$.data.cities[2].name").value("강릉"))
+                .andExpect(jsonPath("$.data.cities[3].name").value("경주"))
+                .andExpect(jsonPath("$.data.cities[4].name").value("서울"))
+                .andExpect(jsonPath("$.data.cities[5].name").value("울산"))
+                .andExpect(jsonPath("$.data.cities[6].name").value("제주"))
+                .andExpect(jsonPath("$.data.cities[7].name").value("서울"))
+                .andExpect(jsonPath("$.data.cities[8].name").value("전주"))
+                .andExpect(jsonPath("$.data.cities[9].name").value("서울"))
+                .andExpect(jsonPath("$.data.cities[10].name").value("울산"))
+                .andExpect(jsonPath("$.data.cities[11].name").value("제주"));
     }
 }
