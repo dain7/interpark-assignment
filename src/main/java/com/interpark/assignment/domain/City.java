@@ -1,11 +1,9 @@
 package com.interpark.assignment.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,13 +12,15 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
+@EntityListeners(AuditingEntityListener.class)
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Member member;
 
     private String name;
 
@@ -32,12 +32,16 @@ public class City {
     private final List<Travel> travels = new ArrayList<>();
 
     @Builder
-    public City(User user, String name) {
-        this.user = user;
+    public City(Member member, String name) {
+        this.member = member;
         this.name = name;
     }
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateCreateTime(LocalDateTime localDateTime) {
+        this.createDatetime = localDateTime;
     }
 }

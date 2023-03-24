@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -19,13 +20,18 @@ public class Travel {
     @ManyToOne(fetch = FetchType.LAZY)
     private City city;
 
-    private Timestamp startDate;
+    private LocalDate startDate;
 
-    private Timestamp endDate;
+    private LocalDate endDate;
 
     @Builder
-    public Travel(City city, Timestamp startDate, Timestamp endDate) {
+    public Travel(City city, LocalDate startDate, LocalDate endDate) {
         this.city = city;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void updateDate(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
         this.endDate = endDate;
     }
@@ -36,5 +42,12 @@ public class Travel {
         }
         this.city = city;
         city.getTravels().add(this);
+    }
+
+    public void removeCity() {
+        if (this.city != null) {
+            this.city.getTravels().remove(this);
+        }
+        this.city = null;
     }
 }
