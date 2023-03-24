@@ -1,9 +1,9 @@
 package com.interpark.assignment.controller;
 
 import com.interpark.assignment.dto.ResponseDto;
-import com.interpark.assignment.dto.user.UserCreateDto;
-import com.interpark.assignment.dto.user.UserResponseDto;
-import com.interpark.assignment.service.UserService;
+import com.interpark.assignment.dto.member.MemberCreateDto;
+import com.interpark.assignment.dto.member.MemberResponseDto;
+import com.interpark.assignment.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/member")
 @RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class MemberController {
+    private final MemberService memberService;
 
     @PostMapping
     public ResponseDto signup(
-            @RequestBody UserCreateDto request
+            @RequestBody MemberCreateDto request
     ) {
-        UserResponseDto response = userService.signup(request);
-        return ResponseDto.ok("user", response);
+        MemberResponseDto response = memberService.signup(request);
+        return ResponseDto.create(response.getId());
     }
 }

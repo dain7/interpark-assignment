@@ -1,11 +1,12 @@
 package com.interpark.assignment.controller;
 
 import com.interpark.assignment.dto.ResponseDto;
-import com.interpark.assignment.dto.city.CityRequestDto;
-import com.interpark.assignment.dto.city.CityResponseDto;
+import com.interpark.assignment.dto.city.*;
 import com.interpark.assignment.service.CityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/city")
@@ -18,14 +19,14 @@ public class CityController {
     public ResponseDto create(
             @RequestBody CityRequestDto request
     ) {
-        cityService.create(request);
-        return ResponseDto.ok();
+        CityCreateResponseDto response = cityService.create(request);
+        return ResponseDto.create(response.getId());
     }
 
     @PostMapping("/{cityId}")
     public ResponseDto update(
             @PathVariable Long cityId,
-            @RequestBody CityRequestDto request
+            @RequestBody CityUpdateRequestDto request
     ) {
         cityService.update(cityId, request);
         return ResponseDto.ok();
@@ -33,10 +34,19 @@ public class CityController {
 
     @GetMapping("/{cityId}")
     public ResponseDto get(
+            @RequestHeader("member-id") Long memberId,
             @PathVariable Long cityId
     ) {
-        CityResponseDto response = cityService.get(cityId);
-        return ResponseDto.ok("city", response);
+        CityResponseDto response = cityService.get(memberId, cityId);
+        return ResponseDto.ok("cities", response);
+    }
+
+    @GetMapping
+    public ResponseDto getByMember(
+            @RequestHeader("member-id") Long memberId
+    ) {
+        List<CityGetResponseDto> response = cityService.getByMember(memberId);
+        return ResponseDto.ok("cities", response);
     }
 
     @DeleteMapping("/{cityId}")
