@@ -28,7 +28,7 @@ jdk 17, springboot, h2, mysql
 
 2. 도시 등록 : [POST] http://localhost:10101/city
 ```json
-// [header] key: member-id, value: memberId
+[header] key: member-id, value: memberId
 
 {
   "name" : "test"
@@ -51,12 +51,12 @@ jdk 17, springboot, h2, mysql
 
 6. 사용자별 도시 조회 : [GET] http://localhost:10101/city
 ```json
-// [header] key: member-id, value: memberId
+[header] key: member-id, value: memberId
 ```
 
 7. 여행 등록 : [POST] http://localhost:10101/travel
 ```json
-// [header] key: member-id, value: memberId
+[header] key: member-id, value: memberId
 
 {
   "cityId":4,
