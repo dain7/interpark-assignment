@@ -36,6 +36,10 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
                 .fetch();
         List<City> cities = new ArrayList<>(travels.stream().map(Travel::getCity).toList());
 
+        if (cities.size() >= 10) {
+            return cities;
+        }
+
         // 여행이 예정된 도시
         List<City> soonCities = queryFactory.select(city)
                 .from(travel)
