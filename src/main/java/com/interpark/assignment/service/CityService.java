@@ -63,13 +63,6 @@ public class CityService {
         City city = cityRepository.findById(cityId).orElseThrow(CityNotFoundException::new);
         memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
-        searchLogRepository.save(
-                SearchLog.builder()
-                        .memberId(memberId)
-                        .cityId(cityId)
-                        .build()
-        );
-
         return CityResponseDto.builder()
                 .id(city.getId())
                 .name(city.getName())
