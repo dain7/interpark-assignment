@@ -6,7 +6,7 @@ spring:
     group:
       "development": "testdb"
       "test": "testdb"
-      "production": ""
+      "production": "proddb"
 
 ---
 
