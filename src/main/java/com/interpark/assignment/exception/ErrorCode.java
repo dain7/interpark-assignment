@@ -5,7 +5,8 @@ public enum ErrorCode {
     CITY_NOT_FOUND_EXCEPTION("해당 도시가 존재하지 않습니다."),
     END_DATE_BEFORE_OR_SAME_START_DATE_EXCEPTION("도착 날짜는 시작 날짜보다 뒤어야 합니다."),
     MEMBER_NOT_FOUND_EXCEPTION("해당 유저가 존재하지 않습니다."),
-    TRAVEL_NOT_FOUND_EXCEPTION("해당 여행 정보가 존재하지 않습니다.");
+    TRAVEL_NOT_FOUND_EXCEPTION("해당 여행 정보가 존재하지 않습니다."),
+    DUPLICATE_NAME_EXCEPTION("중복된 도시명이 존재합니다.");
 
     private final String message;
 

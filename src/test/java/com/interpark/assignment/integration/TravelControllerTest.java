@@ -1,4 +1,4 @@
-package com.interpark.assignment;
+package com.interpark.assignment.integration;
 
 import com.interpark.assignment.domain.Travel;
 import com.interpark.assignment.dto.travel.TravelRequestDto;
@@ -45,6 +45,7 @@ public class TravelControllerTest extends BaseIntegrationTest{
 
         //when
         mvc.perform(post("/travel")
+                        .header("member-id", memberId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request))
@@ -60,7 +61,7 @@ public class TravelControllerTest extends BaseIntegrationTest{
         //given
         Long memberId = memberSetUp.getMemberId("인터파크");
         Long cityId = citySetUp.getCityId(memberId, "서울");
-        Long travelId = travelSetUp.getTravelId(cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
+        Long travelId = travelSetUp.getTravelId(memberId, cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
 
         Long updateCityId = citySetUp.getCityId(memberId, "부산");
 
@@ -93,7 +94,7 @@ public class TravelControllerTest extends BaseIntegrationTest{
         //given
         Long memberId = memberSetUp.getMemberId("인터파크");
         Long cityId = citySetUp.getCityId(memberId, "서울");
-        Long travelId = travelSetUp.getTravelId(cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
+        Long travelId = travelSetUp.getTravelId(memberId, cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
 
         //when
         mvc.perform(delete("/travel/{travelId}", travelId)
@@ -114,7 +115,7 @@ public class TravelControllerTest extends BaseIntegrationTest{
         //given
         Long memberId = memberSetUp.getMemberId("인터파크");
         Long cityId = citySetUp.getCityId(memberId, "서울");
-        Long travelId = travelSetUp.getTravelId(cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
+        Long travelId = travelSetUp.getTravelId(memberId, cityId, LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 10));
 
         //when
         mvc.perform(get("/travel/{travelId}", travelId)

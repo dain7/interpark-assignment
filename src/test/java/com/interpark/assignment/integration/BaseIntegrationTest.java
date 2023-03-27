@@ -1,4 +1,4 @@
-package com.interpark.assignment;
+package com.interpark.assignment.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Disabled;

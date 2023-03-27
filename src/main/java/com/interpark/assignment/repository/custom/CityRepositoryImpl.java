@@ -31,10 +31,14 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
                 .where(
                         isNowAfterStartDate(),
                         isNowBeforeEndDate(),
-                        eqMemberByCity(memberId))
+                        eqMemberByTravel(memberId))
                 .orderBy(travel.startDate.asc())
                 .fetch();
         List<City> cities = new ArrayList<>(travels.stream().map(Travel::getCity).toList());
+
+        if (cities.size() >= 10) {
+            return cities;
+        }
 
         // 여행이 예정된 도시
         List<City> soonCities = queryFactory.select(city)
@@ -42,14 +46,14 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
                 .join(travel.city, city)
                 .where(
                         isSoonTravel(),
-                        eqMemberByCity(memberId),
+                        eqMemberByTravel(memberId),
                         notInCities(cities)
                 )
                 .orderBy(travel.startDate.asc())
                 .fetch();
         cities.addAll(soonCities);
 
-        // 하루 이내에 등록된 도시
+        // 하루 이내에 등록한 도시
         List<City> enteredCities = queryFactory.select(city)
                 .from(city)
                 .where(
@@ -57,19 +61,20 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
                         eqMemberByCity(memberId),
                         notInCities(cities)
                 )
-                .orderBy(city.createDatetime.asc())
+                .orderBy(city.createDatetime.desc())
                 .fetch();
         cities.addAll(enteredCities);
 
-        // 최근 일주일 이내에 한번 이상 조회된 도시
+        // 최근 일주일 이내에 한번 이상 조회한 도시
         List<City> searchedCities = queryFactory.select(city)
                 .from(city)
                 .leftJoin(searchLog).on(city.id.eq(searchLog.cityId))
                 .where(
                         isSearchedIn7Days(),
-                        eqMemberByCity(memberId),
+                        eqMemberBySearchLog(memberId),
                         notInCities(cities)
                 )
+                .orderBy(searchLog.createDatetime.desc())
                 .fetch();
         cities.addAll(searchedCities);
 
@@ -77,8 +82,7 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
         List<City> allCities = queryFactory.select(city)
                 .from(city)
                 .where(
-                        notInCities(cities),
-                        eqMemberByCity(memberId)
+                        notInCities(cities)
                 )
                 .fetch();
         cities.addAll(allCities);
@@ -92,6 +96,15 @@ public class CityRepositoryImpl implements CityRepositoryCustom {
 
     private BooleanExpression eqMemberByCity(Long memberId) {
         return city.member.id.eq(memberId);
+    }
+
+    private BooleanExpression eqMemberByTravel(Long memberId) {
+        return travel.member.id.eq(memberId);
+    }
+
+
+    private BooleanExpression eqMemberBySearchLog(Long memberId) {
+        return searchLog.memberId.eq(memberId);
     }
 
     private BooleanExpression isNowAfterStartDate() {

@@ -42,3 +42,14 @@ spring:
   config:
     activate:
       on-profile: "proddb"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/interpark
+    username: root
+    password: rlaekdls96!
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    generate-ddl: true
+

@@ -17,16 +17,17 @@ public class CityController {
 
     @PostMapping
     public ResponseDto create(
+            @RequestHeader("member-id") Long memberId,
             @RequestBody CityRequestDto request
     ) {
-        CityCreateResponseDto response = cityService.create(request);
+        CityCreateResponseDto response = cityService.create(memberId, request);
         return ResponseDto.create(response.getId());
     }
 
     @PostMapping("/{cityId}")
     public ResponseDto update(
             @PathVariable Long cityId,
-            @RequestBody CityUpdateRequestDto request
+            @RequestBody CityRequestDto request
     ) {
         cityService.update(cityId, request);
         return ResponseDto.ok();
@@ -37,7 +38,7 @@ public class CityController {
             @RequestHeader("member-id") Long memberId,
             @PathVariable Long cityId
     ) {
-        CityResponseDto response = cityService.get(memberId, cityId);
+        CityResponseDto response = cityService.get(cityId);
         return ResponseDto.ok("cities", response);
     }
 

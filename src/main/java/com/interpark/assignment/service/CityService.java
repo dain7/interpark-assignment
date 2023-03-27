@@ -5,6 +5,7 @@ import com.interpark.assignment.domain.Member;
 import com.interpark.assignment.dto.city.*;
 import com.interpark.assignment.exception.CityCannotDeleteException;
 import com.interpark.assignment.exception.CityNotFoundException;
+import com.interpark.assignment.exception.DuplicateNameException;
 import com.interpark.assignment.exception.MemberNotFoundException;
 import com.interpark.assignment.repository.CityRepository;
 import com.interpark.assignment.repository.MemberRepository;
@@ -25,8 +26,8 @@ public class CityService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public CityCreateResponseDto create(CityRequestDto request) {
-        Member member = memberRepository.findById(request.getMemberId())
+    public CityCreateResponseDto create(Long memberId, CityRequestDto request) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
 
         City city = City.builder()
@@ -41,7 +42,7 @@ public class CityService {
     }
 
     @Transactional
-    public void update(Long cityId, CityUpdateRequestDto request) {
+    public void update(Long cityId, CityRequestDto request) {
         City city = cityRepository.findById(cityId).orElseThrow(CityNotFoundException::new);
         city.updateName(request.getName());
     }
@@ -57,9 +58,8 @@ public class CityService {
         cityRepository.delete(city);
     }
 
-    public CityResponseDto get(Long memberId, Long cityId) {
+    public CityResponseDto get(Long cityId) {
         City city = cityRepository.findById(cityId).orElseThrow(CityNotFoundException::new);
-        memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
 
         return CityResponseDto.builder()
                 .id(city.getId())
@@ -68,6 +68,7 @@ public class CityService {
     }
 
     public List<CityGetResponseDto> getByMember(Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         List<City> cities = cityRepository.getCitiesByMember(memberId);
 
         List<CityGetResponseDto> response = new ArrayList<>();
